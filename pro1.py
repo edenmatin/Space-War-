@@ -27,7 +27,7 @@ class AlienInvasion:
             self._check_events()
             if self.gameActive:
                 self.ship.update()
-                self.ship2.update()
+                self.ship2.update2()
             self._update_screen()
             pygame.display.flip()
 
