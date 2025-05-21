@@ -4,6 +4,7 @@ from settings import Settings
 from ship import Ship
 from ship2 import Ship2
 from wall import Wall
+from scoreboard import Scoreboard
 
 class AlienInvasion:
     def __init__(self):
@@ -17,7 +18,7 @@ class AlienInvasion:
         self.gameActive = True
         self.ship = Ship(self)
         self.ship2 = Ship2(self)
-
+        self.sb = Scoreboard(self)
         self.bg_color = self.settings.bg_color
         self.walls = []
         self.create_walls()
@@ -31,17 +32,17 @@ class AlienInvasion:
 
         firstplace = 0
         for i in range(5):
-            wall = Wall(self, firstplace, 0)
+            wall = Wall(self, firstplace, 64)
             self.walls.append(wall)
             firstplace += 64
 
-        firstplace = 0
+        firstplace = 64
         for i in range(4):
             wall = Wall(self, 320, firstplace)
             self.walls.append(wall)
             firstplace += 64
 
-        firstplace =736
+        firstplace =672
         for i in range(4):
             wall = Wall(self, 1116, firstplace)
             self.walls.append(wall)
@@ -49,7 +50,7 @@ class AlienInvasion:
 
         firstplace = 1116
         for i in range(6):
-            wall = Wall(self, firstplace, 736)
+            wall = Wall(self, firstplace, 672)
             self.walls.append(wall)
             firstplace += 64
 
@@ -58,8 +59,8 @@ class AlienInvasion:
         while True:
             self._check_events()
             if self.gameActive:
-                self.ship.update()
-                self.ship2.update()
+                self.ship.update(self.ship2)
+                self.ship2.update(self.ship)
             self._update_screen()
             pygame.display.flip()
 
@@ -112,8 +113,10 @@ class AlienInvasion:
         self.screen.fill(self.bg_color)
         self.ship.blitme()
         self.ship2.blitme()
+        self.sb.show_scores()
         for wall in self.walls:
             wall.blitme()
+        
 
 
 if __name__ == '__main__':
