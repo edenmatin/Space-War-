@@ -16,3 +16,4 @@ def update2(self):
             self.rect.x += 1
         if self.moving_left:
             self.rect.x -= 1
+            
