@@ -3,7 +3,7 @@ import pygame
 from settings import Settings  
 from ship import Ship
 from ship2 import Ship2
-from wall import Wall
+# from wall import Wall
 
 class AlienInvasion:
     def __init__(self):
@@ -20,7 +20,7 @@ class AlienInvasion:
 
         self.bg_color = self.settings.bg_color
         self.walls = []
-        self.create_walls()
+        # self.create_walls()
 
     def run_game(self):
         while True:
