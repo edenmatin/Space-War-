@@ -20,14 +20,14 @@ class AlienInvasion:
 
         self.bg_color = self.settings.bg_color
         self.walls = []
-        self.create_walls()
+        # self.create_walls()
 
     def run_game(self):
         while True:
             self._check_events()
             if self.gameActive:
                 self.ship.update()
-                self.ship2.update()
+                self.ship2.update2()
             self._update_screen()
             pygame.display.flip()
 

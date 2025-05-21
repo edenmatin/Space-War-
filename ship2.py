@@ -19,7 +19,8 @@ class Ship2:
 
     def blitme(self):
         self.screen.blit(self.image, self.rect) 
-def update2(self):
+    
+    def update2(self):
         if self.moving_right:
             self.rect.x += 1
         if self.moving_left:
