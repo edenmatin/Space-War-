@@ -3,7 +3,7 @@ import pygame
 from settings import Settings  
 from ship import Ship
 from ship2 import Ship2
-# from wall import Wall
+from wall import Wall
 
 class AlienInvasion:
     def __init__(self):
@@ -20,7 +20,39 @@ class AlienInvasion:
 
         self.bg_color = self.settings.bg_color
         self.walls = []
-        # self.create_walls()
+        self.create_walls()
+
+    def create_walls(self):
+        firstplace = 208
+        for i in range(6):
+            wall = Wall(self, 750, firstplace)
+            self.walls.append(wall)
+            firstplace += 64
+
+        firstplace = 0
+        for i in range(5):
+            wall = Wall(self, firstplace, 0)
+            self.walls.append(wall)
+            firstplace += 64
+
+        firstplace = 0
+        for i in range(4):
+            wall = Wall(self, 320, firstplace)
+            self.walls.append(wall)
+            firstplace += 64
+
+        firstplace =736
+        for i in range(4):
+            wall = Wall(self, 1116, firstplace)
+            self.walls.append(wall)
+            firstplace -= 64
+
+        firstplace = 1116
+        for i in range(6):
+            wall = Wall(self, firstplace, 736)
+            self.walls.append(wall)
+            firstplace += 64
+
 
     def run_game(self):
         while True:
@@ -35,15 +67,12 @@ class AlienInvasion:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
-
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
 
     def _check_keydown_events(self, event):
-        
         if event.key == pygame.K_w:
             self.ship2.moving_up = True
         elif event.key == pygame.K_a:
@@ -52,7 +81,6 @@ class AlienInvasion:
             self.ship2.moving_down = True
         elif event.key == pygame.K_d:
             self.ship2.moving_right = True
-
         elif event.key == pygame.K_UP:
             self.ship.moving_up = True
         elif event.key == pygame.K_LEFT:
@@ -61,7 +89,6 @@ class AlienInvasion:
             self.ship.moving_down = True
         elif event.key == pygame.K_RIGHT:
             self.ship.moving_right = True
-
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_w:
@@ -72,8 +99,6 @@ class AlienInvasion:
             self.ship2.moving_down = False
         elif event.key == pygame.K_d:
             self.ship2.moving_right = False
-
-
         elif event.key == pygame.K_UP:
             self.ship.moving_up = False
         elif event.key == pygame.K_LEFT:
@@ -87,6 +112,9 @@ class AlienInvasion:
         self.screen.fill(self.bg_color)
         self.ship.blitme()
         self.ship2.blitme()
+        for wall in self.walls:
+            wall.blitme()
+
 
 if __name__ == '__main__':
     ai = AlienInvasion()
