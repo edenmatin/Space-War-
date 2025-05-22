@@ -10,6 +10,12 @@ from bullet import Bullet
 class AlienInvasion:
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load("./music/gamemusic.mp3")  
+        pygame.mixer.music.play(start=50)                
+        pygame.mixer.music.set_volume(1.0)         
+
+        pygame.init()
         self.settings = Settings()
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height)
