@@ -33,7 +33,7 @@ class Ship:
             new_rect.y -= self.settings.ship_speed
         if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
             new_rect.y += self.settings.ship_speed
-
+        
     
         for wall in self.ai_game.walls:
             if new_rect.colliderect(wall.rect):

@@ -16,18 +16,20 @@ class AlienInvasion:
         )
         pygame.display.set_caption("Alien Invasion")
 
-        self.gameActive = True
-        self.ship = Ship(self)
-        self.ship2 = Ship2(self)
-        self.sb = Scoreboard(self)
         self.bg_color = self.settings.bg_color
+        self.sb = Scoreboard(self)
+        self.reset_match()
+
+        self.gameActive = True
+        self.win_time = None
+        self.pause_duration = 2000  
+        self.last_winner = None  
+
         self.walls = []
         self.create_walls()
 
-        self.bullets1 = pygame.sprite.Group()
-        self.bullets2 = pygame.sprite.Group()
-
     def create_walls(self):
+        self.walls = []
         firstplace = 208
         for i in range(6):
             wall = Wall(self, 750, firstplace)
@@ -58,24 +60,51 @@ class AlienInvasion:
             self.walls.append(wall)
             firstplace += 64
 
+    def reset_match(self):
+        self.ship = Ship(self)
+        self.ship2 = Ship2(self)
+        self.bullets1 = pygame.sprite.Group()
+        self.bullets2 = pygame.sprite.Group()
+
     def run_game(self):
         while True:
             self._check_events()
+            current_time = pygame.time.get_ticks()
+
             if self.gameActive:
                 self.ship.update(self.ship2)
                 self.ship2.update(self.ship)
                 self.bullets1.update()
                 self.bullets2.update()
-                if pygame.sprite.spritecollideany(self.ship2, self.bullets2):
-                    pygame.sprite.spritecollide(self.ship2, self.bullets2, True)
-                if pygame.sprite.spritecollideany(self.ship, self.bullets1):
-                    pygame.sprite.spritecollide(self.ship, self.bullets1, True)
+
+                for bullet in self.bullets1:
+                    if bullet.rect.colliderect(self.ship.rect):
+                        bullet.kill()
+                        self.sb.increase_score1(1)
+                        self.last_winner = "player1"
+                        self.gameActive = False
+                        self.win_time = current_time
+
+                for bullet in self.bullets2:
+                    if bullet.rect.colliderect(self.ship2.rect):
+                        bullet.kill()
+                        self.sb.increase_score2(1)
+                        self.last_winner = "player2"
+                        self.gameActive = False
+                        self.win_time = current_time
+
                 for bullet in self.bullets1:
                     if pygame.sprite.spritecollideany(bullet, self.walls):
                         bullet.kill()
                 for bullet in self.bullets2:
                     if pygame.sprite.spritecollideany(bullet, self.walls):
                         bullet.kill()
+
+            elif self.win_time and current_time - self.win_time > self.pause_duration:
+                self.reset_match()
+                self.gameActive = True
+                self.win_time = None
+                self.last_winner = None
 
             self._update_screen()
             pygame.display.flip()
@@ -146,6 +175,23 @@ class AlienInvasion:
         self.sb.show_scores()
         for wall in self.walls:
             wall.blitme()
+
+        if not self.gameActive and self.win_time:
+            font = pygame.font.SysFont(None, 72)
+            if self.last_winner == "player1":
+                msg="Player 1 Wins!"
+                color = (0, 180, 255)
+            elif self.last_winner == "player2":
+                msg="Player 2 Wins!"
+                color = (0, 0, 0)
+            else:
+                msg = ""
+                color = (0, 0, 0)
+
+            if msg:
+                win_image = font.render(msg, True, color)
+                win_rect = win_image.get_rect(center=self.screen.get_rect().center)
+                self.screen.blit(win_image, win_rect)
 
 if __name__ == '__main__':
     ai = AlienInvasion()
