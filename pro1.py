@@ -5,6 +5,7 @@ from ship import Ship
 from ship2 import Ship2
 from wall import Wall
 from scoreboard import Scoreboard
+from bullet import Bullet  
 
 class AlienInvasion:
     def __init__(self):
@@ -22,6 +23,9 @@ class AlienInvasion:
         self.bg_color = self.settings.bg_color
         self.walls = []
         self.create_walls()
+
+        self.bullets1 = pygame.sprite.Group()
+        self.bullets2 = pygame.sprite.Group()
 
     def create_walls(self):
         firstplace = 208
@@ -42,7 +46,7 @@ class AlienInvasion:
             self.walls.append(wall)
             firstplace += 64
 
-        firstplace =672
+        firstplace = 672
         for i in range(4):
             wall = Wall(self, 1116, firstplace)
             self.walls.append(wall)
@@ -54,13 +58,25 @@ class AlienInvasion:
             self.walls.append(wall)
             firstplace += 64
 
-
     def run_game(self):
         while True:
             self._check_events()
             if self.gameActive:
                 self.ship.update(self.ship2)
                 self.ship2.update(self.ship)
+                self.bullets1.update()
+                self.bullets2.update()
+                if pygame.sprite.spritecollideany(self.ship2, self.bullets2):
+                    pygame.sprite.spritecollide(self.ship2, self.bullets2, True)
+                if pygame.sprite.spritecollideany(self.ship, self.bullets1):
+                    pygame.sprite.spritecollide(self.ship, self.bullets1, True)
+                for bullet in self.bullets1:
+                    if pygame.sprite.spritecollideany(bullet, self.walls):
+                        bullet.kill()
+                for bullet in self.bullets2:
+                    if pygame.sprite.spritecollideany(bullet, self.walls):
+                        bullet.kill()
+
             self._update_screen()
             pygame.display.flip()
 
@@ -90,6 +106,14 @@ class AlienInvasion:
             self.ship.moving_down = True
         elif event.key == pygame.K_RIGHT:
             self.ship.moving_right = True
+        elif event.key == pygame.K_SPACE:
+            if len(self.bullets1) < 3:
+                bullet = Bullet(self, self.ship2, direction="right")  
+                self.bullets1.add(bullet)
+        elif event.key == pygame.K_KP_ENTER:
+            if len(self.bullets2) < 3:
+                bullet = Bullet(self, self.ship, direction="left")  
+                self.bullets2.add(bullet)
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_w:
@@ -113,11 +137,15 @@ class AlienInvasion:
         self.screen.fill(self.bg_color)
         self.ship.blitme()
         self.ship2.blitme()
+
+        for bullet in self.bullets1:
+            bullet.draw_bullet()
+        for bullet in self.bullets2:
+            bullet.draw_bullet()
+
         self.sb.show_scores()
         for wall in self.walls:
             wall.blitme()
-        
-
 
 if __name__ == '__main__':
     ai = AlienInvasion()
